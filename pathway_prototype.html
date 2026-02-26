@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MNEMO — Pathway Living Knowledge Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #04050a;
+    --surface: #0b0d16;
+    --panel: #0f1221;
+    --border: #1e2340;
+    --accent: #00f5c4;
+    --accent2: #6c63ff;
+    --accent3: #ff4d6d;
+    --text: #e8ecff;
+    --muted: #5a6080;
+    --stream: #00f5c4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0,245,196,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,196,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .noise {
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ====== HEADER ====== */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(4,5,10,0.8);
+    backdrop-filter: blur(20px);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 44px;
+    height: 44px;
+    position: relative;
+  }
+
+  .logo-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .logo-text {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--text);
+  }
+
+  .logo-text span {
+    color: var(--accent);
+  }
+
+  .logo-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .header-status {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 100px;
+    background: rgba(0,245,196,0.08);
+    border: 1px solid rgba(0,245,196,0.2);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+  }
+
+  .pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse-glow 1.5s infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,245,196,0.6); }
+    50% { box-shadow: 0 0 0 6px rgba(0,245,196,0); }
+  }
+
+  .header-nav {
+    display: flex;
+    gap: 4px;
+  }
+
+  .nav-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-btn.active, .nav-btn:hover {
+    background: var(--panel);
+    border-color: var(--border);
+    color: var(--text);
+  }
+
+  /* ====== HERO ====== */
+  .hero {
+    position: relative;
+    z-index: 5;
+    padding: 80px 40px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    border-radius: 4px;
+    background: rgba(108,99,255,0.1);
+    border: 1px solid rgba(108,99,255,0.3);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 {
+    font-size: clamp(42px, 6vw, 82px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -3px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 .line2 { color: var(--accent); }
+  .hero h1 .line3 { 
+    -webkit-text-stroke: 1px rgba(232,236,255,0.3);
+    color: transparent;
+  }
+
+  .hero-desc {
+    max-width: 580px;
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .btn-primary {
+    padding: 14px 32px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.2);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+
+  .btn-primary:hover::after { transform: translateX(0); }
+
+  .btn-secondary {
+    padding: 14px 32px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-value {
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -1px;
+  }
+
+  .stat-value span { color: var(--accent); }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ====== MAIN DASHBOARD ====== */
+  .dashboard {
+    position: relative;
+    z-index: 5;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .card:hover {
+    border-color: rgba(0,245,196,0.2);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover::before { opacity: 0.6; }
+
+  .card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-label-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ====== STREAM FEED (full width) ====== */
+  .card-stream {
+    grid-column: 1 / -1;
+  }
+
+  .stream-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .stream-title {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .stream-controls {
+    display: flex;
+    gap: 10px;
+  }
+
+  .stream-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .stream-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,245,196,0.05);
+  }
+
+  .stream-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .stream-feed::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(transparent, var(--panel));
+    pointer-events: none;
+  }
+
+  .stream-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    animation: stream-in 0.4s ease forwards;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+  }
+
+  @keyframes stream-in {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .stream-time {
+    color: var(--muted);
+    flex-shrink: 0;
+    min-width: 60px;
+  }
+
+  .stream-source {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .src-db { background: rgba(108,99,255,0.2); color: var(--accent2); }
+  .src-api { background: rgba(0,245,196,0.1); color: var(--accent); }
+  .src-file { background: rgba(255,77,109,0.1); color: var(--accent3); }
+  .src-web { background: rgba(255,200,0,0.1); color: #ffc800; }
+
+  .stream-content { color: var(--text); flex: 1; line-height: 1.4; }
+
+  .stream-badge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 9px;
+    background: rgba(0,245,196,0.1);
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ====== VECTOR INDEX ====== */
+  .vector-viz {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    margin-top: 8px;
+  }
+
+  .vector-viz canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ====== CONTEXT WINDOW ====== */
+  .context-bar-wrap {
+    margin-top: 12px;
+  }
+
+  .context-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .context-label-row span:first-child {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+  }
+
+  .context-label-row span:last-child {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+  }
+
+  .context-bar {
+    height: 6px;
+    background: var(--surface);
+    border-radius: 100px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .context-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width 1s ease;
+  }
+
+  .memory-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .memory-layer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--surface);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+  }
+
+  .layer-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .layer-name { color: var(--text); flex: 1; font-size: 11px; }
+  .layer-size { color: var(--accent); }
+  .layer-status { 
+    width: 6px; height: 6px; border-radius: 50%; 
+    background: var(--accent); 
+    animation: pulse-glow 2s infinite;
+  }
+
+  /* ====== QUERY INTERFACE ====== */
+  .card-query {
+    grid-column: 2 / 4;
+  }
+
+  .query-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .query-input {
+    flex: 1;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .query-input:focus {
+    border-color: var(--accent);
+  }
+
+  .query-submit {
+    padding: 12px 20px;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+
+  .query-submit:hover { opacity: 0.85; }
+
+  .query-result {
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+    min-height: 80px;
+    position: relative;
+  }
+
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .result-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .result-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+  }
+
+  .result-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .result-sources {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .source-chip {
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    background: rgba(108,99,255,0.1);
+    border: 1px solid rgba(108,99,255,0.2);
+    color: var(--accent2);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .source-chip:hover {
+    background: rgba(108,99,255,0.2);
+  }
+
+  .typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: var(--accent);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* ====== ADAPTATION FEED ====== */
+  .adapt-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .adapt-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--surface);
+    border-left: 2px solid transparent;
+    transition: border-color 0.3s;
+    animation: fadein 0.5s ease;
+  }
+
+  @keyframes fadein { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+
+  .adapt-item.new { border-left-color: var(--accent); }
+  .adapt-item.updated { border-left-color: var(--accent2); }
+  .adapt-item.removed { border-left-color: var(--accent3); }
+
+  .adapt-icon { font-size: 16px; flex-shrink: 0; }
+  .adapt-details { flex: 1; }
+  .adapt-title { font-size: 12px; font-weight: 700; color: var(--text); }
+  .adapt-desc { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--muted); margin-top: 2px; }
+  .adapt-time { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--muted); }
+
+  /* ====== PIPELINE ARCHITECTURE ====== */
+  .card-arch {
+    grid-column: 1 / -1;
+  }
+
+  .arch-diagram {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-top: 20px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .arch-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .arch-box {
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    text-align: center;
+    min-width: 120px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .arch-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,245,196,0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .arch-box:hover::before { opacity: 1; }
+  .arch-box:hover { border-color: rgba(0,245,196,0.3); }
+
+  .arch-box-icon { font-size: 24px; margin-bottom: 6px; display: block; }
+  .arch-box-name { font-size: 12px; font-weight: 800; color: var(--text); }
+  .arch-box-sub { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--muted); margin-top: 3px; }
+
+  .arch-box.highlight {
+    border-color: rgba(0,245,196,0.5);
+    background: rgba(0,245,196,0.04);
+  }
+
+  .arch-box.highlight .arch-box-name { color: var(--accent); }
+
+  .arch-arrow {
+    display: flex;
+    align-items: center;
+    width: 48px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .arch-arrow-line {
+    height: 2px;
+    flex: 1;
+    background: linear-gradient(90deg, var(--border), var(--accent));
+    position: relative;
+    overflow: hidden;
+  }
+
+  .arch-arrow-line::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(0,245,196,0.8), transparent);
+    animation: flow 2s linear infinite;
+  }
+
+  @keyframes flow {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+  }
+
+  .arch-arrow-head {
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid var(--accent);
+  }
+
+  .arch-node-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-align: center;
+    max-width: 100px;
+  }
+
+  /* ====== METRICS ROW ====== */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+    max-width: 1400px;
+    margin: 0 auto 20px;
+    padding: 0 40px;
+    position: relative;
+    z-index: 5;
+  }
+
+  .metric-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.3s;
+  }
+
+  .metric-card:hover { border-color: rgba(0,245,196,0.2); }
+
+  .metric-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .metric-icon.green { background: rgba(0,245,196,0.1); }
+  .metric-icon.purple { background: rgba(108,99,255,0.1); }
+  .metric-icon.red { background: rgba(255,77,109,0.1); }
+  .metric-icon.yellow { background: rgba(255,200,0,0.1); }
+
+  .metric-info { flex: 1; }
+  .metric-value {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--text);
+  }
+  .metric-value span { font-size: 14px; color: var(--accent); }
+  .metric-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .metric-delta {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+  }
+
+  /* ====== SECTION TITLE ====== */
+  .section-title {
+    position: relative;
+    z-index: 5;
+    max-width: 1400px;
+    margin: 40px auto 20px;
+    padding: 0 40px;
+  }
+
+  .section-title h2 {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .section-title p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  /* ====== SCROLLBAR ====== */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* ====== FOOTER ====== */
+  footer {
+    position: relative;
+    z-index: 5;
+    border-top: 1px solid var(--border);
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 100%;
+  }
+
+  .footer-left {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .footer-tech {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .tech-badge {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="22" cy="22" r="21" stroke="#00f5c4" stroke-width="1.5"/>
+        <circle cx="22" cy="22" r="6" fill="#00f5c4" fill-opacity="0.15"/>
+        <circle cx="22" cy="22" r="6" stroke="#00f5c4" stroke-width="1.5"/>
+        <line x1="22" y1="1" x2="22" y2="11" stroke="#00f5c4" stroke-width="1.5"/>
+        <line x1="22" y1="33" x2="22" y2="43" stroke="#00f5c4" stroke-width="1.5"/>
+        <line x1="1" y1="22" x2="11" y2="22" stroke="#00f5c4" stroke-width="1.5"/>
+        <line x1="33" y1="22" x2="43" y2="22" stroke="#00f5c4" stroke-width="1.5"/>
+        <circle cx="8" cy="8" r="2.5" fill="#6c63ff"/>
+        <circle cx="36" cy="8" r="2.5" fill="#6c63ff"/>
+        <circle cx="8" cy="36" r="2.5" fill="#6c63ff"/>
+        <circle cx="36" cy="36" r="2.5" fill="#6c63ff"/>
+        <line x1="9.9" y1="9.9" x2="17.6" y2="17.6" stroke="#6c63ff" stroke-width="1" opacity="0.5"/>
+        <line x1="34.1" y1="9.9" x2="26.4" y2="17.6" stroke="#6c63ff" stroke-width="1" opacity="0.5"/>
+        <line x1="9.9" y1="34.1" x2="17.6" y2="26.4" stroke="#6c63ff" stroke-width="1" opacity="0.5"/>
+        <line x1="34.1" y1="34.1" x2="26.4" y2="26.4" stroke="#6c63ff" stroke-width="1" opacity="0.5"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">MN<span>EMO</span></div>
+      <div class="logo-sub">Powered by Pathway Framework</div>
+    </div>
+  </div>
+
+  <div class="header-status">
+    <div class="status-pill">
+      <div class="pulse-dot"></div>
+      LIVE PIPELINE ACTIVE
+    </div>
+    <div class="status-pill" style="background: rgba(108,99,255,0.08); border-color: rgba(108,99,255,0.2); color: var(--accent2);">
+      <div class="pulse-dot" style="background: var(--accent2);"></div>
+      VECTOR INDEX SYNCED
+    </div>
+  </div>
+
+  <nav class="header-nav">
+    <button class="nav-btn active">Dashboard</button>
+    <button class="nav-btn">Pipeline</button>
+    <button class="nav-btn">Query</button>
+    <button class="nav-btn">Settings</button>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">⚡ POST-TRANSFORMER ARCHITECTURE</div>
+  <h1>
+    <div class="line1">AI That Never</div>
+    <div class="line2">Forgets.</div>
+    <div class="line3">Ever.</div>
+  </h1>
+  <p class="hero-desc">
+    MNEMO solves AI's fundamental memory problem using Pathway's real-time streaming architecture. Unlike transformer-based models that require batch re-ingestion, MNEMO continuously learns from live data streams — adapting its knowledge base in milliseconds, not hours.
+  </p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="startDemo()">▶ Run Live Demo</button>
+    <button class="btn-secondary">View Architecture →</button>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-value"><span id="statDocCount">0</span>K<span>+</span></div>
+      <div class="stat-label">Documents Indexed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value"><span id="statLatency">0</span>ms</div>
+      <div class="stat-label">Avg Query Latency</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value"><span id="statSources">0</span></div>
+      <div class="stat-label">Live Data Sources</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value"><span id="statContext">∞</span></div>
+      <div class="stat-label">Context Window</div>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS ROW -->
+<div class="metrics-row">
+  <div class="metric-card">
+    <div class="metric-icon green">🧠</div>
+    <div class="metric-info">
+      <div class="metric-value"><span id="m1">247</span><span>K</span></div>
+      <div class="metric-name">Vectors in Index</div>
+    </div>
+    <div class="metric-delta">+12/s</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-icon purple">⚡</div>
+    <div class="metric-info">
+      <div class="metric-value"><span id="m2">42</span><span>ms</span></div>
+      <div class="metric-name">Stream Ingestion</div>
+    </div>
+    <div class="metric-delta">LIVE</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-icon yellow">🔄</div>
+    <div class="metric-info">
+      <div class="metric-value"><span id="m3">0</span><span>%</span></div>
+      <div class="metric-name">Re-ingestion Rate</div>
+    </div>
+    <div class="metric-delta" style="color: var(--accent3);">ELIMINATED</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-icon red">📊</div>
+    <div class="metric-info">
+      <div class="metric-value"><span id="m4">99.9</span><span>%</span></div>
+      <div class="metric-name">Answer Accuracy</div>
+    </div>
+    <div class="metric-delta">↑ 2.1%</div>
+  </div>
+</div>
+
+<!-- SECTION: LIVE PIPELINE -->
+<div class="section-title">
+  <h2>Live Data Pipeline</h2>
+  <p>Real-time document streams being ingested, vectorized, and indexed without downtime</p>
+</div>
+
+<div class="dashboard">
+
+  <!-- STREAM FEED -->
+  <div class="card card-stream">
+    <div class="stream-header">
+      <div class="stream-title">Continuous Data Stream</div>
+      <div class="stream-controls">
+        <button class="stream-btn active">ALL</button>
+        <button class="stream-btn">DB</button>
+        <button class="stream-btn">API</button>
+        <button class="stream-btn">FILES</button>
+      </div>
+    </div>
+    <div class="stream-feed" id="streamFeed"></div>
+  </div>
+
+  <!-- MEMORY LAYERS -->
+  <div class="card">
+    <div class="card-label"><div class="card-label-dot"></div> CONTEXT LAYERS</div>
+    <div class="context-bar-wrap">
+      <div class="context-label-row">
+        <span>Short-term Buffer</span>
+        <span>4,096 tokens</span>
+      </div>
+      <div class="context-bar"><div class="context-fill" style="width: 72%"></div></div>
+      <div class="context-label-row">
+        <span>Mid-term Store</span>
+        <span>524K tokens</span>
+      </div>
+      <div class="context-bar"><div class="context-fill" style="width: 45%; background: linear-gradient(90deg, #6c63ff, #00f5c4)"></div></div>
+      <div class="context-label-row">
+        <span>Long-term Archive</span>
+        <span>∞ (Vector Index)</span>
+      </div>
+      <div class="context-bar"><div class="context-fill" style="width: 100%; background: linear-gradient(90deg, #ff4d6d, #6c63ff, #00f5c4)"></div></div>
+    </div>
+    <div class="memory-layers">
+      <div class="memory-layer">
+        <div class="layer-icon" style="background: rgba(0,245,196,0.1);">💾</div>
+        <div class="layer-name">Document Store</div>
+        <div class="layer-size" id="layerSize1">247,432 docs</div>
+        <div class="layer-status"></div>
+      </div>
+      <div class="memory-layer">
+        <div class="layer-icon" style="background: rgba(108,99,255,0.1);">🔮</div>
+        <div class="layer-name">Vector Index (HNSW)</div>
+        <div class="layer-size" style="color: var(--accent2)">247K vectors</div>
+        <div class="layer-status" style="background: var(--accent2)"></div>
+      </div>
+      <div class="memory-layer">
+        <div class="layer-icon" style="background: rgba(255,77,109,0.1);">⚡</div>
+        <div class="layer-name">Streaming Buffer</div>
+        <div class="layer-size" style="color: var(--accent3)" id="layerBuf">128 pending</div>
+        <div class="layer-status" style="background: var(--accent3)"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUERY INTERFACE -->
+  <div class="card card-query">
+    <div class="card-label"><div class="card-label-dot"></div> REAL-TIME QUERY ENGINE</div>
+    <div class="query-box">
+      <input type="text" class="query-input" id="queryInput" placeholder="Ask anything — using freshest indexed data..." value="What changed in our database in the last 10 minutes?">
+      <button class="query-submit" onclick="runQuery()">ASK →</button>
+    </div>
+    <div class="query-result" id="queryResult">
+      <div class="result-header">
+        <div class="result-label">MNEMO RESPONSE</div>
+        <div class="result-meta" id="resultMeta">Ready to query</div>
+      </div>
+      <div class="result-text" id="resultText">
+        MNEMO is continuously monitoring your data streams. Unlike traditional RAG systems that go stale between batch updates, every answer here reflects the <em>current state</em> of your data — updated in real-time using Pathway's streaming vector index. Click "ASK →" to query.
+      </div>
+      <div class="result-sources" id="resultSources"></div>
+    </div>
+  </div>
+
+  <!-- REAL-TIME ADAPTATION -->
+  <div class="card">
+    <div class="card-label"><div class="card-label-dot" style="background: var(--accent2)"></div> LIVE ADAPTATIONS</div>
+    <div class="adapt-list" id="adaptList">
+      <div class="adapt-item new">
+        <div class="adapt-icon">✨</div>
+        <div class="adapt-details">
+          <div class="adapt-title">New policy doc ingested</div>
+          <div class="adapt-desc">Q1_2026_compliance.pdf → 892 vectors added</div>
+        </div>
+        <div class="adapt-time">2s ago</div>
+      </div>
+      <div class="adapt-item updated">
+        <div class="adapt-icon">🔄</div>
+        <div class="adapt-details">
+          <div class="adapt-title">Product pricing updated</div>
+          <div class="adapt-desc">CRM sync → 14 vectors replaced</div>
+        </div>
+        <div class="adapt-time">18s ago</div>
+      </div>
+      <div class="adapt-item removed">
+        <div class="adapt-icon">🗑</div>
+        <div class="adapt-details">
+          <div class="adapt-title">Deprecated endpoint removed</div>
+          <div class="adapt-desc">api/v1/legacy → 3 vectors purged</div>
+        </div>
+        <div class="adapt-time">45s ago</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIPELINE ARCHITECTURE -->
+  <div class="card card-arch">
+    <div class="card-label"><div class="card-label-dot"></div> PATHWAY ARCHITECTURE — HOW IT WORKS</div>
+    <div class="arch-diagram">
+      <div class="arch-node">
+        <div class="arch-box">
+          <span class="arch-box-icon">🗄</span>
+          <div class="arch-box-name">Data Sources</div>
+          <div class="arch-box-sub">DB, APIs, Files, Web</div>
+        </div>
+        <div class="arch-node-label">Live Connectors</div>
+      </div>
+      <div class="arch-arrow"><div class="arch-arrow-line"></div><div class="arch-arrow-head"></div></div>
+      <div class="arch-node">
+        <div class="arch-box">
+          <span class="arch-box-icon">🌊</span>
+          <div class="arch-box-name">Stream Engine</div>
+          <div class="arch-box-sub">Pathway Runtime</div>
+        </div>
+        <div class="arch-node-label">Event Processing</div>
+      </div>
+      <div class="arch-arrow"><div class="arch-arrow-line"></div><div class="arch-arrow-head"></div></div>
+      <div class="arch-node">
+        <div class="arch-box highlight">
+          <span class="arch-box-icon">🔮</span>
+          <div class="arch-box-name">Document Store</div>
+          <div class="arch-box-sub">Auto-sync Index</div>
+        </div>
+        <div class="arch-node-label" style="color: var(--accent)">Core Innovation</div>
+      </div>
+      <div class="arch-arrow"><div class="arch-arrow-line"></div><div class="arch-arrow-head"></div></div>
+      <div class="arch-node">
+        <div class="arch-box highlight">
+          <span class="arch-box-icon">🧠</span>
+          <div class="arch-box-name">LLM Layer</div>
+          <div class="arch-box-sub">Always Fresh Context</div>
+        </div>
+        <div class="arch-node-label" style="color: var(--accent)">Zero Staleness</div>
+      </div>
+      <div class="arch-arrow"><div class="arch-arrow-line"></div><div class="arch-arrow-head"></div></div>
+      <div class="arch-node">
+        <div class="arch-box">
+          <span class="arch-box-icon">💬</span>
+          <div class="arch-box-name">Query API</div>
+          <div class="arch-box-sub">REST / WebSocket</div>
+        </div>
+        <div class="arch-node-label">Real-time Answers</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">MNEMO © 2026 — Built on Pathway Framework · Prototype v0.1</div>
+  <div class="footer-tech">
+    <div class="tech-badge">PYTHON 3.11</div>
+    <div class="tech-badge">PATHWAY</div>
+    <div class="tech-badge">HNSW VECTORS</div>
+    <div class="tech-badge">OPENAI / ANTHROPIC LLM</div>
+    <div class="tech-badge">REST API</div>
+  </div>
+</footer>
+
+<script>
+// ====== STREAM SIMULATION ======
+const streamData = [
+  { source: 'db', label: 'src-db', srcName: 'DB', content: 'Updated 847 customer records in CRM — delta sync triggered', badge: 'INDEXED' },
+  { source: 'api', label: 'src-api', srcName: 'API', content: 'GitHub webhook: 3 new commits to main — README.md, config.yaml updated', badge: 'VECTORIZED' },
+  { source: 'file', label: 'src-file', srcName: 'FILE', content: 'New file uploaded: Q2_roadmap_2026.pdf (42 pages) — chunking...', badge: 'PROCESSING' },
+  { source: 'web', label: 'src-web', srcName: 'WEB', content: 'Competitor pricing page crawled — 2 price changes detected and indexed', badge: 'INDEXED' },
+  { source: 'api', label: 'src-api', srcName: 'API', content: 'Slack channel #announcements — 14 new messages embedded into context', badge: 'VECTORIZED' },
+  { source: 'db', label: 'src-db', srcName: 'DB', content: 'PostgreSQL: ticket_status changed for 23 rows → vectors updated in-place', badge: 'UPDATED' },
+  { source: 'file', label: 'src-file', srcName: 'FILE', content: 'Dropbox sync: meeting_notes_feb21.txt — 1.2K tokens added to index', badge: 'INDEXED' },
+  { source: 'web', label: 'src-web', srcName: 'WEB', content: 'RSS feed: 5 new articles on AI regulation — ingesting with metadata tags', badge: 'INDEXING' },
+];
+
+const adaptData = [
+  { type: 'new', icon: '✨', title: 'Slack messages ingested', desc: '#product-updates → 34 vectors', time: 'just now' },
+  { type: 'updated', icon: '🔄', title: 'User permissions updated', desc: 'Access control DB → 7 vectors replaced', time: 'just now' },
+  { type: 'new', icon: '✨', title: 'Sales call transcript added', desc: 'call_2026_02_21.txt → 156 vectors', time: 'just now' },
+  { type: 'removed', icon: '🗑', title: 'Expired contract removed', desc: 'contract_2024_old.pdf → 89 vectors purged', time: 'just now' },
+  { type: 'updated', icon: '🔄', title: 'Product spec revised', desc: 'spec_v3.2.md → 43 vectors updated', time: 'just now' },
+];
+
+let streamCount = 0;
+let vecCount = 247432;
+let bufCount = 128;
+let statCount = 0;
+
+function getTime() {
+  const now = new Date();
+  return now.toTimeString().slice(0, 8);
+}
+
+// Replace simulated query with real API call
+async function runQuery() {
+    if (isTyping) return;
+    const input = document.getElementById('queryInput');
+    const question = input.value;
+    
+    // Update UI to loading state
+    document.getElementById('resultMeta').textContent = '⚡ Querying live index...';
+    
+    try {
+        const response = await fetch('http://localhost:8001/api/query', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: question })
+        });
+        const data = await response.json();
+        
+        // Display Real Result
+        document.getElementById('resultMeta').textContent = `Answered in ${data.latency_ms}ms`;
+        typeText(document.getElementById('resultText'), data.answer);
+        
+        // Update Sources
+        const resultSources = document.getElementById('resultSources');
+        resultSources.innerHTML = '';
+        data.sources.forEach(src => {
+            const chip = document.createElement('span');
+            chip.className = 'source-chip';
+            chip.textContent = '📎 ' + src;
+            resultSources.appendChild(chip);
+        });
+    } catch (error) {
+        document.getElementById('resultText').textContent = "Error connecting to MNEMO Engine.";
+    }
+}
+
+// Connect to Live Stream WebSocket
+function connectStream() {
+    const ws = new WebSocket("ws://localhost:8001/ws/stream");
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        // Reuse your existing UI logic to append this real data
+        // addStreamItem(data); 
+    };
+}
+</script>
+</body>
+</html>
